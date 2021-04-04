@@ -6,7 +6,8 @@ require('dotenv').config()
 
 mongoose.connect(process.env.DB_CONNECTION , {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
     
   }).then(() => {
     console.log("Successfully connected to the database");  
@@ -15,4 +16,3 @@ mongoose.connect(process.env.DB_CONNECTION , {
     console.log('Could not connect to the database. Exiting now...', err);
     
   });
-  

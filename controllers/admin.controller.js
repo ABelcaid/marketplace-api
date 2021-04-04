@@ -97,7 +97,7 @@ const loginAdmin = async (req, res) => {
                         message : "login success",
                         role : admin.role,
                         first_login : admin.first_login,
-                        name : admin.name
+                        adminName : admin.name
                 })
 
             }
@@ -125,10 +125,18 @@ const loggedIn = async (req , res) =>{
         let decoded = await jwt_decode(token);
         let role = decoded.role;
 
-        res.send({
-                loggedIn : true,
-                role : role
-        }) 
+
+        if(role == "admin" ||  role == "root"){
+
+                res.send({
+                        loggedIn : true,
+                        role : role
+                })
+        }
+
+     
+
+        res.json({loggedIn : false})
 
 
   } catch (error) {
@@ -166,7 +174,7 @@ const updatePassword = async (req, res) =>{
                 const hashPassword = await bcrypt.hash(newPassword, salt)
 
 
-                const admin = await Admin.findByIdAndUpdate(id, {password :hashPassword, first_login : true })
+                const admin = await Admin.findByIdAndUpdate(id, {password :hashPassword, first_login : true },{ useFindAndModify: false })
 
                 if (!admin) {
                         return res.status(404).send({
@@ -223,6 +231,34 @@ const getAllAdmin = async (req, res) => {
 }
 
 
+const deleteAdmin = async (req ,res ) =>{
+
+      const id = req.params.id
+
+        try {
+             
+
+
+                const admin = await Admin.findByIdAndRemove(id,{ useFindAndModify: false })
+
+                res.send({
+                        message : "Admin deteted ",
+                })
+
+
+          
+
+
+
+            }
+            catch (err) {
+                    console.error(err)
+
+            }
+
+}
+
+
 
 
 
@@ -233,5 +269,5 @@ const getAllAdmin = async (req, res) => {
 
 
 module.exports = {
-        addAdmin ,loginAdmin,getAllAdmin,logOut,loggedIn,updatePassword
+        addAdmin ,loginAdmin,getAllAdmin,logOut,loggedIn,updatePassword,deleteAdmin
 };

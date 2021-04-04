@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 var cors = require('cors');
-var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 
 require('dotenv').config()
@@ -14,19 +13,27 @@ const port = process.env.PORT || 8080;
 
 
 app.use(express.json());
+
 app.use(cors({
   origin : ['http://localhost:3000'],
   credentials : true
 }));
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-app.use(cookieParser())
+
+
+
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 
 
 const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
+const productRoutes = require("./routes/product");
 
 
 app.use('/admin', adminRoutes);
+app.use('/', userRoutes);
+app.use('/product', productRoutes);
 
 
 
