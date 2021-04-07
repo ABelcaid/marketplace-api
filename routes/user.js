@@ -15,17 +15,21 @@ router.put('/activateAccount/:token', userController.activateAccount);
 router.get('/loggedInUser', userController.loggedInUser);
 router.get('/logout', userController.logOut);
 router.get('/wantToBeSeller',auth.verifyUserToken , userController.wantToBeSellerList);
-router.get('/numListedProduct',auth.verifyUserToken , userController.getNumListedProduct);
-
+// router.get('/numListedProduct',auth.verifyUserToken , userController.getNumListedProduct);
+router.get('/sellersList',auth.verifyRootToken , userController.getAllSellers);
+router.get('/sellerStatistic',auth.verifyUserToken , userController.getStatistic);
 
 router.put('/becomeSeller', userController.becomeSeller);
 
 router.put('/makeItSeller/:id', userController.makeItSeller);
 
 
+router.delete('/deleteSeller/:id',auth.verifyRootToken,  userController.deleteSeller);
+
+
 // router.post('/add',  auth.verifyRootToken , userController.adduser);
 
-// router.delete('/deleteuser/:id',auth.verifyRootToken,  userController.deleteuser);
+
 
 // router.put('/updatePassword',auth.verifyRootToken,  userController.updatePassword);
 

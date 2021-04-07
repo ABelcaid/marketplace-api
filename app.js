@@ -21,6 +21,8 @@ app.use(cors({
 
 
 
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -29,13 +31,23 @@ app.use(cookieParser());
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
+const delevryManRoutes = require("./routes/deliveryMan");
+const adsRoutes = require("./routes/ads");
+const checkoutRoutes = require("./routes/checkout");
+const orderRoutes = require("./routes/order");
+const accountTypeRoutes = require("./routes/accountType");
+// const accountTypeRoutes = require("./routes/accountType");
 
 
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 app.use('/product', productRoutes);
-
-
+app.use('/deliveryMan', delevryManRoutes);
+app.use('/ads', adsRoutes);
+app.use('/checkout', checkoutRoutes);
+app.use('/order', orderRoutes);
+app.use('/accountType', accountTypeRoutes);
+// app.use('/accountType', accountTypeRoutes);
 
 
 

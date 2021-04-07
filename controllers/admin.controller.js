@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Admin = require('../models/admin.model');
 const jwt_decode = require('jwt-decode');
+const { inputValidationSchema  } = require("./inputValidation");
 
 
 
@@ -9,6 +10,24 @@ const jwt_decode = require('jwt-decode');
  const addAdmin = async (req, res) => {
 
         try {
+
+                let error = [];
+
+        
+                const { err } = inputValidationSchema.validate(req.body)
+                if (err) {
+
+                        
+
+                        error.push(err.details[0].message);
+                        return res.json({
+
+                                error : error
+                        }) 
+
+                };
+
+
                 const { role } = req.admin;
 
                 if (role !== 'root') {
@@ -20,16 +39,23 @@ const jwt_decode = require('jwt-decode');
                 const existingAdmin = await Admin.findOne({email : req.body.email});
 
 
-                console.log(existingAdmin);
+               
 
                 if (existingAdmin) {
-                        return res.status(400).json({
-                                errorMessage : "An account whit this email exist "
-                        });
+
+                        error.push('An account whit this email exist ');
+                        return res.json({
+
+                                error : error
+                        }) 
+
+                        // return res.status(400).json({
+                        //         errorMessage : "An account whit this email exist "
+                        // });
                         
                 }
 
-                const salt = await bcrypt.genSalt();
+                const salt = await bcrypt.genSalt(10);
                 const hashPassword = await bcrypt.hash(req.body.password, salt)
 
                 const newAdmin = new Admin({
@@ -46,7 +72,7 @@ const jwt_decode = require('jwt-decode');
                 
                 const saveAdmin = await newAdmin.save();
 
-                res.json(saveAdmin)
+                res.json({message : 'Admin added'})
 
                 
 
@@ -66,23 +92,54 @@ const jwt_decode = require('jwt-decode');
 const loginAdmin = async (req, res) => {
 
         try {
+
+                let error = [];
+
+        
+                const { err } = inputValidationSchema.validate(req.body)
+                if (err) {
+
+                        
+
+                        error.push(err.details[0].message);
+                        return res.json({
+
+                                error : error
+                        }) 
+
+                };
+
+
+
                 let email = req.body.email;
                 let password = req.body.password;
 
                 const admin = await Admin.findOne({ email: email })
 
                 if (!admin) {
-                        return res.status(404).send({
-                                message : 'Admin note found'
-                        })
+
+                        error.push('Admin note found');
+                        return res.json({
+
+                                error : error
+                        }) 
+                        // return res.status(404).send({
+                        //         message : 'Admin note found'
+                        // })
 
                         
                 }
 
                 if (!await bcrypt.compare(password, admin.password)) {
-                        return res.status(404).send({
-                                message : 'invalid credentials '
-                        })  
+
+                        error.push('invalid credentials');
+                        return res.json({
+
+                                error : error
+                        }) 
+                //         return res.status(404).send({
+                //                 message : 'invalid credentials '
+                //         })  
                 }
 
 
@@ -132,11 +189,13 @@ const loggedIn = async (req , res) =>{
                         loggedIn : true,
                         role : role
                 })
+        }else{
+                res.json({loggedIn : false})
         }
 
      
 
-        res.json({loggedIn : false})
+        
 
 
   } catch (error) {

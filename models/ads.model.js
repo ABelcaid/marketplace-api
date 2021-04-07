@@ -5,10 +5,7 @@ const Schema = mongoose.Schema;
 
 const Ads = new Schema(
   {
-    company: {
-      type: String,
-      required: true,
-    },
+    
     description: {
       type: String,
  

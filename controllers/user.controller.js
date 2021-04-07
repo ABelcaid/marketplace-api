@@ -3,6 +3,9 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 const jwt_decode = require('jwt-decode');
 
+const { inputValidationSchema  } = require("./inputValidation");
+
+
 
 const {sendMail} = require('./sendMail');
 
@@ -14,7 +17,21 @@ const {sendMail} = require('./sendMail');
 
         let error = [];
 
-        try {
+        
+                const { err } = inputValidationSchema.validate(req.body)
+                if (err) {
+
+                        
+
+                        error.push(err.details[0].message);
+                        return res.json({
+
+                                error : error
+                        }) 
+
+                };
+
+                try {
                 
      
                 const existingUser = await User.findOne({email : req.body.email});
@@ -102,7 +119,24 @@ const activateAccount = async (req,res)=>{
 
 
 const login = async (req, res) => {
+         
+
+
          let error = [];
+
+        
+         const { err } = inputValidationSchema.validate(req.body)
+         if (err) {
+
+                 
+
+                 error.push(err.details[0].message);
+                 return res.json({
+
+                         error : error
+                 }) 
+
+         };
 
         try {
                 let email = req.body.email;
@@ -165,35 +199,6 @@ const login = async (req, res) => {
 
 
 
-const getNumListedProduct = async (req, res) =>{
-
-        try {
-                const { role,id } = req.user;
-
-             
-
-                if (role !== 'seller') {
-                        return res.status(403).json({
-                            message: 'untheorized'
-                          })
-                }
-
-
-                let userAccount = await User.findById(id);
-
-                res.status(200).json(userAccount.listedProduct)
-
-               
-                 
-                
-        } catch (err) {
-                res.json(err)
-                
-        }
-
-}
-
-
 
 
 
@@ -219,11 +224,13 @@ const loggedInUser = async (req , res) =>{
                         loggedIn : true,
                         role : role
                 })
+        }else{
+                res.json({loggedIn : false})
         }
 
      
 
-        res.json({loggedIn : false})
+        
  
 
 
@@ -339,4 +346,136 @@ const wantToBeSellerList = async (req,res) =>{
 }
 
 
-module.exports = {register, login,activateAccount,loggedInUser,logOut,becomeSeller,wantToBeSellerList,makeItSeller,getNumListedProduct}
+
+
+
+const getAllSellers = async (req,res) =>{
+
+        try {
+                const { role } = req.admin;
+
+                if (role == 'root' || role == 'admin') {
+
+                        let sellersList = await User.find({role: 'seller'});
+                        if (!sellersList) {
+                                return res.status(404).send({
+                                        message : 'sellers note found'
+                                })                
+                        }  
+                        res.send(sellersList);
+                     
+                    }
+                    else{
+
+                        return res.status(403).json({
+                                message: 'untheorized'
+                              })
+                    }
+
+                        
+                    
+                
+          
+
+            }
+            catch (err) {
+                console.error(err)
+            }
+
+
+}
+
+
+
+
+
+const deleteSeller= async (req ,res ) =>{
+
+        const id = req.params.id
+  
+          try {
+
+                const { role } = req.admin;
+
+                if (role == 'root' || role == 'admin') {
+
+                        const seller = await User.findByIdAndRemove(id,{ useFindAndModify: false });
+
+  
+                        res.send({
+                                message : "seller deleted ",
+                        })
+
+
+                } else{
+
+                        return res.status(403).json({
+                                message: 'untheorized'
+                              })
+                    }
+               
+  
+  
+                  
+  
+  
+            
+  
+  
+  
+              }
+              catch (err) {
+                      console.error(err)
+  
+              }
+  
+  }
+
+
+
+
+
+
+const getStatistic = async (req,res) => {
+
+
+        try {
+
+
+                const { role,id } = req.user;
+
+                if (role == 'seller') {
+
+                        let  seller = await User.findById(id);
+
+
+                        res.send({
+                                typeAccount : seller.typeAccount,
+                                listedProduct : seller.listedProduct,
+                                income : seller.income,
+                        })
+
+
+                } else{
+
+                        return res.status(403).json({
+                                message: 'untheorized'
+                              })
+                    }
+                
+
+
+
+              
+                
+
+            }
+            catch (err) {
+                console.error(err)
+            }
+
+}
+  
+
+
+module.exports = {register, login,activateAccount,loggedInUser,logOut,becomeSeller,wantToBeSellerList,makeItSeller,getAllSellers,deleteSeller,getStatistic}

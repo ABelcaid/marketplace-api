@@ -11,6 +11,8 @@ router.get('/myProducts',  auth.verifyUserToken , productController.sellerProduc
 
 router.get('/productByCategory/:category/:length', productController.productByCategory);
 
+router.get('/productByCategoryPagenation/:category', productController.productByCategoryPagenation);
+
 router.get('/productById/:id', productController.productById);
 
 

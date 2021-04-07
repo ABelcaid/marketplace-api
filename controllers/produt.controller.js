@@ -167,6 +167,51 @@ const productByCategory = async(req,res)=>{
 }
 
 
+// -------------get product py category -----------
+
+const productByCategoryPagenation = async(req,res)=>{
+
+    try {
+
+        const category = req.params.category;
+        const length = req.params.length;
+
+        const PAGE_SIZE = 3;
+        const page = parseInt(req.query.page || "0");
+        
+        const total = await Product.countDocuments({ category: category });
+
+   
+
+      
+        
+
+        const products = await Product.find({ category: category },{ selled: false }).limit(PAGE_SIZE).skip(PAGE_SIZE * page);;
+
+        if (!products) {
+
+            return res.json({
+                error : "You have no product yet "
+            }) 
+
+                
+        }
+
+        res.json({totalPages: Math.ceil(total / PAGE_SIZE),products});
+
+
+        
+    } catch (err) {
+        res.json(err)
+        
+    }
+
+    
+
+}
+
+
+
 
 // -------------get product py category -----------
 
@@ -213,5 +258,5 @@ const productById= async(req,res)=>{
 
 
 module.exports = {
-    addProduct,sellerProducts,productByCategory,productById
+    addProduct,sellerProducts,productByCategory,productById,productByCategoryPagenation
 };
