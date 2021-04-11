@@ -87,8 +87,7 @@ const {sendMail} = require('./sendMail');
                 
             }
             catch (err) {
-                console.error(err);
-                res.status(500).send();
+                res.json(err)
             }
      
 }

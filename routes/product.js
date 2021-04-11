@@ -16,6 +16,7 @@ router.get('/productByCategoryPagenation/:category', productController.productBy
 router.get('/productById/:id', productController.productById);
 
 
+router.delete('/deleteProduct/:id',auth.verifyUserToken,  productController.deleteProduct);
 
 
 

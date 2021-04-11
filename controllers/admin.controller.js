@@ -31,9 +31,16 @@ const { inputValidationSchema  } = require("./inputValidation");
                 const { role } = req.admin;
 
                 if (role !== 'root') {
-                        return res.status(403).json({
-                            message: 'untheorized'
-                          })
+
+                        // return res.status(403).json({
+                        //     message: 'untheorized'
+                        //   })
+
+                        error.push('untheorized ');
+                        return res.json({
+
+                                error : error
+                        }) 
                     }
                    
                 const existingAdmin = await Admin.findOne({email : req.body.email});
@@ -79,8 +86,7 @@ const { inputValidationSchema  } = require("./inputValidation");
                 
             }
             catch (err) {
-                console.error(err);
-                res.status(500).send();
+                res.json(err)
             }
      
 }
@@ -159,7 +165,8 @@ const loginAdmin = async (req, res) => {
 
             }
             catch (err) {
-                    console.error(err)
+
+                res.json(err)
 
             }
 
@@ -224,6 +231,10 @@ const logOut = (req, res) => {
 const updatePassword = async (req, res) =>{
 
         try {
+
+                let error = [];
+
+
                 let decoded = await jwt_decode(req.cookies['jwt']);
                 let id = decoded.id;
  
@@ -236,15 +247,23 @@ const updatePassword = async (req, res) =>{
                 const admin = await Admin.findByIdAndUpdate(id, {password :hashPassword, first_login : true },{ useFindAndModify: false })
 
                 if (!admin) {
-                        return res.status(404).send({
-                                message : 'Admin note found'
-                        })
+
+                        error.push('Admin note found');
+                        return res.json({
+
+                                error : error
+                        }) 
+                        // return res.status(404).send({
+                        //         message : 'Admin note found'
+                        // })
 
                         
                 }
                 res.send({
                         message : "Password Updated ",
                 })
+
+                
 
 
           

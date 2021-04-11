@@ -30,6 +30,19 @@ const User = require('../models/user.model');
                     let typeAccount = userAccount.typeAccount;
                    
                     let listedProduct = userAccount.listedProduct;
+
+                    let income = userAccount.income;
+
+
+                    if (income > 5000) {
+
+                        await User.findByIdAndUpdate(id,{typeAccount : "pro"});
+                    }
+
+                    if (income > 20000) {
+
+                        await User.findByIdAndUpdate(id,{typeAccount : "expert"});
+                    }
      
 
                     if (typeAccount == 'starter') {
@@ -253,10 +266,40 @@ const productById= async(req,res)=>{
 
 
 
+const deleteProduct = async (req ,res ) =>{
+
+    const id = req.params.id
+
+      try {
+           
+
+
+              const product = await Product.findByIdAndRemove(id,{ useFindAndModify: false })
+
+              res.send({
+                      message : "product deteted ",
+              })
+
+
+        
+
+
+
+          }
+          catch (err) {
+                  console.error(err)
+
+          }
+
+}
+
+
+
+
 
 
 
 
 module.exports = {
-    addProduct,sellerProducts,productByCategory,productById,productByCategoryPagenation
+    addProduct,sellerProducts,productByCategory,productById,productByCategoryPagenation,deleteProduct
 };
