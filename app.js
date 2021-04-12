@@ -15,7 +15,7 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 
 app.use(cors({
-  origin : ['https://marketplace-lupin.herokuapp.com'],
+  origin : process.env.CORS_ORIGIN,
   credentials : true
 }));
 
@@ -36,7 +36,6 @@ const adsRoutes = require("./routes/ads");
 const checkoutRoutes = require("./routes/checkout");
 const orderRoutes = require("./routes/order");
 const accountTypeRoutes = require("./routes/accountType");
-// const accountTypeRoutes = require("./routes/accountType");
 
 
 app.use('/admin', adminRoutes);
@@ -47,7 +46,6 @@ app.use('/ads', adsRoutes);
 app.use('/checkout', checkoutRoutes);
 app.use('/order', orderRoutes);
 app.use('/accountType', accountTypeRoutes);
-// app.use('/accountType', accountTypeRoutes);
 
 
 
