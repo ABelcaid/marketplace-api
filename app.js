@@ -15,10 +15,8 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 
 app.use(cors({
-  origin :"*",
-  
+  origin : ['http://localhost:3000','https://marketplace-lupin.herokuapp.com:3000'],
   credentials : true
-  
 }));
 
 
